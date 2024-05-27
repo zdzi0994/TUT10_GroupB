@@ -1,8 +1,9 @@
-let numRectangles = 10;
+let numRectangles = 30;
 let rectangleWidth;
 let rectangleHeight;
 let lineRectangles = [];
 let drawRectangles = true;
+let lineSpacing; 10
 
 let yellow;
 let blue; 
@@ -10,7 +11,6 @@ let beige;
 let red; 
 
 let randomColors; 
-
 
 function setup() {
   createCanvas(500, 500);
@@ -24,32 +24,44 @@ function setup() {
   red = color(176, 58, 46); 
 
   //Create array of the color scheme
-  let randomColors = [yellow, blue, beige, red]
+  randomColors = [yellow, blue, beige, red];
 
-  // Create 4 loops for rectangle1
-  for (let i = 4; i < 7; i++) {
-    let startY = random(height - rectangleHeight); // Generate a random y-position for each line
+  // Array to store possible starting points
+  let possibleStartX = [];
+  let possibleStartY = [];
+  for (let i = 0; i < numRectangles; i++) {
+    possibleStartX.push(i * rectangleWidth);
+    possibleStartY.push(i * rectangleHeight);
+  }
 
-    for (let i = 0; i < numRectangles; i++) {
-      let x = i * rectangleWidth;
+  console.log("Possible starting X coordinates:", possibleStartX);
+  console.log("Possible starting Y coordinates:", possibleStartY);
+
+  // Create horizontal lines
+  for (let i = 0; i < 3; i++) {
+    let startY = random(possibleStartY);
+    for (let j = 0; j < numRectangles; j++) {
+      let x = j * rectangleWidth;
       let y = startY;
       let horizontalLines = new Rectangle(x, y, rectangleWidth, rectangleHeight, random(randomColors));
       lineRectangles.push(horizontalLines);
     }
+    // Remove the chosen startY to prevent overlap
+    possibleStartY.splice(possibleStartY.indexOf(startY), 1);
   }
 
-  for (let i = 4; i < 10; i++) {
-    let startX = random(width - rectangleWidth); // Generate a random x-position for the line
-
-    
-
-  for (let i = 0; i < numRectangles; i++) {
-    let x = startX;
-    let y = i * rectangleWidth;
-    let verticalLines = new Rectangle(x, y, rectangleWidth, rectangleHeight, random(randomColors));
-    lineRectangles.push(verticalLines);
+  // Create vertical lines
+  for (let i = 0; i < 4; i++) {
+    let startX = random(possibleStartX);
+    for (let j = 0; j < numRectangles; j++) {
+      let x = startX;
+      let y = j * rectangleHeight;
+      let verticalLines = new Rectangle(x, y, rectangleWidth, rectangleHeight, random(randomColors));
+      lineRectangles.push(verticalLines);
+    }
+    // Remove the chosen startX to prevent overlap
+    possibleStartX.splice(possibleStartX.indexOf(startX), 1);
   }
-}
 }
 
 function draw() {
