@@ -30,7 +30,7 @@ function draw() {
   growthCharZ = sin(frameCount * 2) * 0.5 + 0.5;
 
   // Draw the character centered on the canvas without rotation and scaling
-  characterZ.display(width / 2, height / 2, color(`#D9D8D4`), 1); // Scale factor 1
+  CharacterZ.display(width / 2, height / 2, color(`#D9D8D4`)); // Scale factor 1
 }
 
 //Creating character class
