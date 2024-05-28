@@ -1,13 +1,16 @@
+// rectangles in grid variable settings
 let numRectangles = 25;
 let rectangleWidth;
 let rectangleHeight;
 let lineRectangles = [];
 let drawRectangles = true;
 let lineSpacing = 10;
-let charaBlocks = [];
-let boundary = [];
 
+// character blocks variable settings
+let charaBlocks = [];   // character blocks array
+let boundary = [];  // boundary array
 
+// grid color variables
 let yellow;
 let blue;
 let beige;
@@ -20,7 +23,7 @@ function setup() {
   rectangleWidth = width / numRectangles;
   rectangleHeight = height / numRectangles;
 
-  // Create a colors scheme for the rectangles
+  // Create a colors scheme for the rectangles in grid
   yellow = color(236, 214, 38);
   blue = color(68, 105, 186);
   beige = color(217, 216, 211);
@@ -29,13 +32,13 @@ function setup() {
   // Create array of the color scheme
   randomColors = [yellow, blue, beige, red];
 
-  // Define starting points for vertical lines
+  // Define starting points for vertical grid lines
   let verticalStartX = [140, 220, 260, 380];
 
-  // Define starting points for horizontal lines
+  // Define starting points for horizontal grid lines
   let horizontalStartY = [60, 260, 400];
 
-  // Create horizontal lines
+  // Create horizontal grid lines
   for (let i = 0; i < horizontalStartY.length; i++) {
     let startY = horizontalStartY[i];
     for (let j = 0; j < numRectangles; j++) {
@@ -46,7 +49,7 @@ function setup() {
     }
   }
 
-  // Create vertical lines
+  // Create vertical grid lines
   for (let i = 0; i < verticalStartX.length; i++) {
     let startX = verticalStartX[i];
     for (let j = 0; j < numRectangles; j++) {
@@ -57,25 +60,33 @@ function setup() {
     }
   }
 
-  // Character's width and height
-  let charaWidth = random(20,50);
-  let charaHeight = random(20,50);
+  // Character's block width and height
+  let charaWidth = random(30,50); // randomised between 30 to 50
+  let charaHeight = random(30,50);
 
-  // Define each boundary with the start (x,y) points and end (x,y) points
-  boundary.push({startX:0+charaWidth/2, startY:horizontalStartY[0]+rectangleWidth+charaHeight/2, endX:verticalStartX[0]-charaWidth/2, endY:horizontalStartY[1]-charaHeight/2});
-  boundary.push({startX:0+charaWidth/2, startY:horizontalStartY[1]+rectangleWidth+charaHeight/2, endX:verticalStartX[0]-charaWidth/2, endY:horizontalStartY[2]-charaHeight/2});
+  // Define each of the boundaries with the start (x,y) points and end (x,y) points
+  let bound_startX = [0+charaWidth/2, verticalStartX[2]+rectangleWidth+charaWidth/2, verticalStartX[3]+rectangleWidth+charaWidth/2];
+  let bound_endX = [verticalStartX[0]-charaWidth/2, verticalStartX[3]-charaWidth/2, width-charaWidth/2];
+  let bound_startY = [horizontalStartY[0]+rectangleWidth+charaHeight/2,horizontalStartY[1]+rectangleWidth+charaHeight/2];
+  let bound_endY = [horizontalStartY[1]-charaHeight/2, horizontalStartY[2]-charaHeight/2];
+
+  // Add each defined boundary to boundary array (6 boundaries)
+  boundary.push({startX:bound_startX[0], startY:bound_startY[0], endX:bound_endX[0], endY:bound_endY[0]});
+  boundary.push({startX:bound_startX[0], startY:bound_startY[1], endX:bound_endX[0], endY:bound_endY[1]});
   
-  boundary.push({startX:verticalStartX[2]+rectangleWidth+charaWidth/2, startY:horizontalStartY[0]+rectangleWidth+charaHeight/2, endX:verticalStartX[3]-charaWidth/2, endY:horizontalStartY[1]-charaHeight/2});
-  boundary.push({startX:verticalStartX[2]+rectangleWidth+charaWidth/2, startY:horizontalStartY[1]+rectangleWidth+charaHeight/2, endX:verticalStartX[3]-charaWidth/2, endY:horizontalStartY[2]-charaHeight/2});
+  boundary.push({startX:bound_startX[1], startY:bound_startY[0], endX:bound_endX[1], endY:bound_endY[0]});
+  boundary.push({startX:bound_startX[1], startY:bound_startY[1], endX:bound_endX[1], endY:bound_endY[1]});
 
-  boundary.push({startX:verticalStartX[3]+rectangleWidth+charaWidth/2, startY:horizontalStartY[0]+rectangleWidth+charaHeight/2, endX:width-charaWidth/2, endY:horizontalStartY[1]-charaHeight/2});
-  boundary.push({startX:verticalStartX[3]+rectangleWidth+charaWidth/2, startY:horizontalStartY[1]+rectangleWidth+charaHeight/2, endX:width-charaWidth/2, endY:horizontalStartY[2]-charaHeight/2});
+  boundary.push({startX:bound_startX[2], startY:bound_startY[0], endX:bound_endX[2], endY:bound_endY[0]});
+  boundary.push({startX:bound_startX[2], startY:bound_startY[1], endX:bound_endX[2], endY:bound_endY[1]});
 
   for(let i = 0; i < 6; i++){
+    // pick random boundary
     let randomBoundary = boundary[floor(random()*boundary.length)];
-    //find index of the randomBoundary in the boundary array
+    // find index of the randomBoundary in the boundary array and remove that randomBoundary that's already been selected
     boundary.splice(boundary.indexOf(randomBoundary),1);
 
+    // define charaDetails for all the character blocks
     let charaDetails = {
       x: random(randomBoundary.startX,randomBoundary.endX), 
       y: random(randomBoundary.startY,randomBoundary.endY),
@@ -85,6 +96,7 @@ function setup() {
       boundary: randomBoundary
     }
 
+    // create the same number of chara1 and chara2 then push it to charaBlocks array
     if(i % 2 == 0){
       charaBlocks.push(new chara1(charaDetails));
     }else{
@@ -95,12 +107,14 @@ function setup() {
 
 function draw() {
   background(230, 213, 190);
+  // draw the grid made up of rectangles
   if (drawRectangles) {
     for (const rect of lineRectangles) {
       rect.draw();
     }
   }
 
+  // draw each character block
   for(let chara of charaBlocks){
     chara.move();
     chara.checkCollision();
@@ -129,49 +143,50 @@ class chara1{
   constructor(charaDetails){
     this.x = charaDetails.x;
     this.y = charaDetails.y;
-    this.baseWidth = charaDetails.w;
-    this.baseHeight = charaDetails.h;
-    this.innerWidth = charaDetails.w * 0.5; 
-    this.innerHeight = charaDetails.h * 0.5; 
-    this.smallestWidth = charaDetails.w * 0.25; 
-    this.smallestHeight = charaDetails.h * 0.25; 
+    this.baseWidth = charaDetails.w;  // width for the biggest rectangle
+    this.baseHeight = charaDetails.h; // height for the biggest rectangle
+    this.innerWidth = charaDetails.w * 0.5; // width for the inner medium rectangle
+    this.innerHeight = charaDetails.h * 0.5; // height for the inner medium rectangle
+    this.smallestWidth = charaDetails.w * 0.25; // width for the smallest rectangle
+    this.smallestHeight = charaDetails.h * 0.25; // height for the smallest rectangle
     this.breathingSpeed = 0.10; // Speed of breathing effect
 
-    this.speed = random(2,5);
-    this.direction = 1;
-    this.Horizontal = charaDetails.state;
-    this.boundary = charaDetails.boundary;
+    this.speed = random(2,5); // speed of character's movement
+    this.direction = 1; // direction of character's movement (1 = move right or move down; -1 = move left or move up)
+    this.Horizontal = charaDetails.state; // true if the character moves horizontally, and false if it moves vertically
+    this.boundary = charaDetails.boundary; // set the boundary in which the character can move
   }
 
   update() {
+    // breathing effects for each of the rectangles
     let breathSizeOuter = sin(frameCount* this.breathingSpeed) * 5;
     this.currentWidth = this.baseWidth + breathSizeOuter;
     this.currentHeight = this.baseHeight + breathSizeOuter;
 
-
-    let breathSizeInner = sin(frameCount * this.breathingSpeed + PI / 2) * 2; // Offset phase for inner rectangle
+    let breathSizeInner = sin(frameCount * this.breathingSpeed + 180 / 2) * 2; // Offset phase for inner medium rectangle
     this.innerWidth = this.baseWidth * 0.5 + breathSizeInner;
     this.innerHeight = this.baseHeight * 0.5 + breathSizeInner;
 
-
-    let breathSizeSmallest = sin(frameCount * this.breathingSpeed + PI) * 0.5; // Further offset phase for third rectangle
+    let breathSizeSmallest = sin(frameCount * this.breathingSpeed + 180) * 0.5; // Further offset phase for smallest rectangle
     this.smallestWidth = this.baseWidth * 0.25 + breathSizeSmallest;
     this.smallestHeight = this.baseHeight * 0.25 + breathSizeSmallest;
   }
 
   display(){
     push();
+    rectMode(CENTER); // set rectMode to center
+
+    // Display the biggest rectangle
     fill('#4682B4');  // Blue color 
     stroke(255);     
-    rectMode(CENTER);
     rect(this.x, this.y, this.currentWidth, this.currentHeight);
 
-
+    // Display the inner medium rectangle
     fill('#FFD700');  // Yellow color
     stroke(255);       
     rect(this.x, this.y, this.innerWidth, this.innerHeight);
 
-
+    // Display the smallest rectangle
     fill('#FFFFFF');  // White color
     noStroke();       
     rect(this.x, this.y, this.smallestWidth, this.smallestHeight);
@@ -184,6 +199,7 @@ class chara1{
   }
 
   move(){
+    // move horizontally if character's state is true, and vertically if it's false
     if(this.Horizontal){
       this.x += this.speed * this.direction;
     } else {
@@ -192,6 +208,9 @@ class chara1{
   }
 
   checkCollision(){
+    // check the collision with the grid
+    // if it moves horizontal, change the direction when it touches the x boundary
+    // if it moves vertical, change the direction when it touches the y boundary
     if(this.Horizontal){
       if(this.x <= this.boundary.startX || this.x > this.boundary.endX){
         this.direction *= -1;
@@ -211,10 +230,10 @@ class chara2{
     this.width = charaDetails.w;
     this.height = charaDetails.h;
 
-    this.speed = random(2,5);
-    this.direction = 1;
-    this.Horizontal = charaDetails.state;
-    this.boundary = charaDetails.boundary;
+    this.speed = random(2,5); // speed of character's movement
+    this.direction = 1; // direction of character's movement (1 = move right or move down; -1 = move left or move up)
+    this.Horizontal = charaDetails.state; // true if the character moves horizontally, and false if it moves vertically
+    this.boundary = charaDetails.boundary; // set the boundary in which the character can move
   }
   
   draw() {    
@@ -269,6 +288,7 @@ class chara2{
     ellipse(0, this.height/6, (this.width/3), this.height/10);    
 
     pop();
+    angleMode(RADIANS);
   }
 
   eyeOne(x, y, flip) {
@@ -300,6 +320,7 @@ class chara2{
   }
 
   move(){
+    // move horizontally if character's state is true, and vertically if it's false
     if(this.Horizontal){
       this.x += this.speed * this.direction;
     } else {
@@ -308,6 +329,9 @@ class chara2{
   }
 
   checkCollision(){
+    // check the collision with the grid
+    // if it moves horizontal, change the direction when it touches the x boundary
+    // if it moves vertical, change the direction when it touches the y boundary
     if(this.Horizontal){
       if(this.x <= this.boundary.startX || this.x > this.boundary.endX){
         this.direction *= -1;
@@ -318,6 +342,4 @@ class chara2{
       }
     }
   }
-
-
 }
