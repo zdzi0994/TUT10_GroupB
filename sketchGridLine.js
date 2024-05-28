@@ -4,6 +4,8 @@ let rectangleHeight;
 let lineRectangles = [];
 let drawRectangles = true;
 let lineSpacing = 10;
+let charaBlocks = [];
+let boundary = [];
 
 let yellow;
 let blue;
@@ -53,6 +55,39 @@ function setup() {
       lineRectangles.push(verticalLines);
     }
   }
+
+  // Character's width and height
+  let charaWidth = random(20,50);
+  let charaHeight = random(20,50);
+
+  // Define each boundary with the start (x,y) points and end (x,y) points
+  boundary.push({startX:0, startY:horizontalStartY[0]+rectangleWidth, endX:verticalStartX[0]-charaWidth, endY:horizontalStartY[1]-charaHeight});
+  boundary.push({startX:0, startY:horizontalStartY[1]+rectangleWidth, endX:verticalStartX[0]-charaWidth, endY:horizontalStartY[2]-charaHeight});
+  
+  boundary.push({startX:verticalStartX[2]+rectangleWidth, startY:horizontalStartY[0]+rectangleWidth, endX:verticalStartX[3]-charaWidth, endY:horizontalStartY[1]-charaHeight});
+  boundary.push({startX:verticalStartX[2]+rectangleWidth, startY:horizontalStartY[1]+rectangleWidth, endX:verticalStartX[3]-charaWidth, endY:horizontalStartY[2]-charaHeight});
+
+  boundary.push({startX:verticalStartX[3]+rectangleWidth, startY:horizontalStartY[0]+rectangleWidth, endX:width-charaWidth, endY:horizontalStartY[1]-charaHeight});
+  boundary.push({startX:verticalStartX[3]+rectangleWidth, startY:horizontalStartY[1]+rectangleWidth, endX:width-charaWidth, endY:horizontalStartY[2]-charaHeight});
+
+
+  for(let i = 0; i < 3; i++){
+    let randomBoundary = boundary[floor(random()*boundary.length)];
+    //find index of the randomBoundary in the boundary array
+    boundary.splice(boundary.indexOf(randomBoundary),1);
+
+    let charaBlock = new chara(
+      random(randomBoundary.startX,randomBoundary.endX-30), 
+      random(randomBoundary.startY,randomBoundary.endY-30),
+      //randomBoundary.startY+(randomBoundary.endY - randomBoundary.startY)/2,
+      charaWidth,
+      charaHeight, 
+      "black",
+      random()>=0.5);
+    charaBlock.boundary = randomBoundary;
+  
+    charaBlocks.push(charaBlock);
+  }
 }
 
 function draw() {
@@ -62,6 +97,12 @@ function draw() {
       rect.draw();
     }
   }
+  for(let chara of charaBlocks){
+    chara.move();
+    chara.checkCollision(chara.boundary);
+    chara.draw();
+  }
+  
   stroke(0);
 }
 
@@ -77,5 +118,44 @@ class Rectangle {
   draw() {
     fill(this.color);
     rect(this.x, this.y, this.width, this.height);
+  }
+}
+
+class chara{
+  constructor(x,y,w,h,color,state){
+    this.x = x;
+    this.y = y;
+    this.rectWidth = w;
+    this.rectHeight = h;
+    this.color = color;
+    this.speed = random(2,5);
+    this.direction = 1;
+    this.Horizontal = state;
+  }
+
+  draw(){
+    fill(this.color);
+    noStroke();
+    rect(this.x, this.y, this.rectWidth, this.rectHeight);
+  }
+
+  move(){
+    if(this.Horizontal){
+      this.x += this.speed * this.direction;
+    } else {
+      this.y += this.speed * this.direction;
+    }
+  }
+
+  checkCollision(boundary){
+    if(this.Horizontal){
+      if(this.x <= boundary.startX || this.x > boundary.endX){
+        this.direction *= -1;
+      }
+    } else {
+      if(this.y <= boundary.startY || this.y > boundary.endY){
+        this.direction *= -1;
+      }
+    }
   }
 }
