@@ -53,11 +53,11 @@ class CharacterZ {
     rect(0, 0, mainRectWidth, mainRectHeight); // Adjust the size as needed
 
 
-//moving rectangles
-//styles
-noStroke();
+    //moving rectangles
+    //styles
+    noStroke();
 
-//rectangle with minor movement 
+    //rectangle with minor movement 
     fill(`#4469BA`);
     stroke(`#4469BA`); 
     strokeWeight(3);
@@ -65,11 +65,11 @@ noStroke();
     let mediumInsideRectHeight = map(growthCharZ, 0, 1, mainRectHeight/4 * 3, mainRectHeight); // Map the growth factor to the height
     rect(0, 0, mediumInsideRectWidth, mediumInsideRectHeight);
    
-//static rectangle 
-  fill(`#ecd626`);
-  stroke(`#4469BA`);
-  strokeWeight(2);
-  rect(0, 0, mainRectWidth/8 * 6, mainRectHeight/8 *6)
+    //static rectangle 
+    fill(`#ecd626`);
+    stroke(`#4469BA`);
+    strokeWeight(2);
+    rect(0, 0, mainRectWidth/8 * 6, mainRectHeight/8 *6)
 
   
     // Eyes
